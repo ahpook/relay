@@ -289,7 +289,12 @@ func NewListParametersCommand(rt runtimefactory.RuntimeFactory) *cobra.Command {
 			tw.AppendHeader(table.Row{"NAME", "DEFAULT", "DESCRIPTION"})
 
 			for name, parameter := range workflowRevision.Parameters {
-				tw.AppendRow(table.Row{name, parameter.Default, parameter.Description})
+				parameterDefault := parameter.Default
+				if parameterDefault == nil {
+					parameterDefault = ""
+				}
+
+				tw.AppendRow(table.Row{name, parameterDefault, parameter.Description})
 			}
 
 			fmt.Fprintf(rt.IO().Out, "%s\n", tw.Render())
@@ -397,7 +402,10 @@ func NewRunStatusCommand(rt runtimefactory.RuntimeFactory) *cobra.Command {
 			tw.AppendHeader(table.Row{"STEP", "STATUS"})
 
 			for _, step := range wr.Steps {
-				tw.AppendRow(table.Row{*step.Name, *step.Status})
+				if step != nil {
+					stepMap := step.(map[string]interface{})
+					tw.AppendRow(table.Row{stepMap["name"], stepMap["status"]})
+				}
 			}
 
 			fmt.Fprintf(rt.IO().Out, "%s\n", tw.Render())

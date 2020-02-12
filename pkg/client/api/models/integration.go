@@ -29,6 +29,9 @@ type Integration struct {
 	// Required: true
 	Auth *IntegrationAO2Auth `json:"auth"`
 
+	// The event sources exposed by this integration
+	EventSources []*EventSourceSummary `json:"event_sources"`
+
 	// Time of last integration call
 	LastUsed string `json:"last_used,omitempty"`
 
@@ -59,6 +62,8 @@ func (m *Integration) UnmarshalJSON(raw []byte) error {
 
 		Auth *IntegrationAO2Auth `json:"auth"`
 
+		EventSources []*EventSourceSummary `json:"event_sources"`
+
 		LastUsed string `json:"last_used,omitempty"`
 
 		Workflows []*WorkflowSummary `json:"workflows"`
@@ -70,6 +75,8 @@ func (m *Integration) UnmarshalJSON(raw []byte) error {
 	m.AccountLogin = dataAO2.AccountLogin
 
 	m.Auth = dataAO2.Auth
+
+	m.EventSources = dataAO2.EventSources
 
 	m.LastUsed = dataAO2.LastUsed
 
@@ -99,6 +106,8 @@ func (m Integration) MarshalJSON() ([]byte, error) {
 
 		Auth *IntegrationAO2Auth `json:"auth"`
 
+		EventSources []*EventSourceSummary `json:"event_sources"`
+
 		LastUsed string `json:"last_used,omitempty"`
 
 		Workflows []*WorkflowSummary `json:"workflows"`
@@ -107,6 +116,8 @@ func (m Integration) MarshalJSON() ([]byte, error) {
 	dataAO2.AccountLogin = m.AccountLogin
 
 	dataAO2.Auth = m.Auth
+
+	dataAO2.EventSources = m.EventSources
 
 	dataAO2.LastUsed = m.LastUsed
 
@@ -138,6 +149,10 @@ func (m *Integration) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateEventSources(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateWorkflows(formats); err != nil {
 		res = append(res, err)
 	}
@@ -161,6 +176,31 @@ func (m *Integration) validateAuth(formats strfmt.Registry) error {
 			}
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *Integration) validateEventSources(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.EventSources) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.EventSources); i++ {
+		if swag.IsZero(m.EventSources[i]) { // not required
+			continue
+		}
+
+		if m.EventSources[i] != nil {
+			if err := m.EventSources[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("event_sources" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil

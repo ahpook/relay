@@ -7,6 +7,7 @@ package models
 
 import (
 	"encoding/json"
+	"strconv"
 
 	strfmt "github.com/go-openapi/strfmt"
 
@@ -32,6 +33,10 @@ type IntegrationSummary struct {
 	// Required: true
 	// Enum: [active lapsed]
 	Status *string `json:"status"`
+
+	// The valid uses for this integration
+	// Required: true
+	Uses []*IntegrationUse `json:"uses"`
 }
 
 // UnmarshalJSON unmarshals this object from a JSON structure
@@ -50,6 +55,8 @@ func (m *IntegrationSummary) UnmarshalJSON(raw []byte) error {
 		Provider *string `json:"provider"`
 
 		Status *string `json:"status"`
+
+		Uses []*IntegrationUse `json:"uses"`
 	}
 	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
 		return err
@@ -60,6 +67,8 @@ func (m *IntegrationSummary) UnmarshalJSON(raw []byte) error {
 	m.Provider = dataAO1.Provider
 
 	m.Status = dataAO1.Status
+
+	m.Uses = dataAO1.Uses
 
 	return nil
 }
@@ -80,6 +89,8 @@ func (m IntegrationSummary) MarshalJSON() ([]byte, error) {
 		Provider *string `json:"provider"`
 
 		Status *string `json:"status"`
+
+		Uses []*IntegrationUse `json:"uses"`
 	}
 
 	dataAO1.Name = m.Name
@@ -87,6 +98,8 @@ func (m IntegrationSummary) MarshalJSON() ([]byte, error) {
 	dataAO1.Provider = m.Provider
 
 	dataAO1.Status = m.Status
+
+	dataAO1.Uses = m.Uses
 
 	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
 	if errAO1 != nil {
@@ -115,6 +128,10 @@ func (m *IntegrationSummary) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateStatus(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateUses(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -171,6 +188,31 @@ func (m *IntegrationSummary) validateStatus(formats strfmt.Registry) error {
 	// value enum
 	if err := m.validateStatusEnum("status", "body", *m.Status); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *IntegrationSummary) validateUses(formats strfmt.Registry) error {
+
+	if err := validate.Required("uses", "body", m.Uses); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(m.Uses); i++ {
+		if swag.IsZero(m.Uses[i]) { // not required
+			continue
+		}
+
+		if m.Uses[i] != nil {
+			if err := m.Uses[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("uses" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil

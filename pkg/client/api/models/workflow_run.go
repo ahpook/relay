@@ -6,8 +6,6 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"strconv"
-
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
@@ -27,7 +25,7 @@ type WorkflowRun struct {
 
 	// A list of workflow steps
 	// Required: true
-	Steps []*WorkflowRunStep `json:"steps"`
+	Steps []WorkflowRunStep `json:"steps"`
 
 	// workflow
 	// Required: true
@@ -60,7 +58,7 @@ func (m *WorkflowRun) UnmarshalJSON(raw []byte) error {
 	var dataAO2 struct {
 		Parameters WorkflowRunParameters `json:"parameters,omitempty"`
 
-		Steps []*WorkflowRunStep `json:"steps"`
+		Steps []WorkflowRunStep `json:"steps"`
 
 		Workflow *Workflow `json:"workflow"`
 
@@ -104,7 +102,7 @@ func (m WorkflowRun) MarshalJSON() ([]byte, error) {
 	var dataAO2 struct {
 		Parameters WorkflowRunParameters `json:"parameters,omitempty"`
 
-		Steps []*WorkflowRunStep `json:"steps"`
+		Steps []WorkflowRunStep `json:"steps"`
 
 		Workflow *Workflow `json:"workflow"`
 
@@ -187,22 +185,6 @@ func (m *WorkflowRun) validateSteps(formats strfmt.Registry) error {
 
 	if err := validate.Required("steps", "body", m.Steps); err != nil {
 		return err
-	}
-
-	for i := 0; i < len(m.Steps); i++ {
-		if swag.IsZero(m.Steps[i]) { // not required
-			continue
-		}
-
-		if m.Steps[i] != nil {
-			if err := m.Steps[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("steps" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
 	}
 
 	return nil

@@ -47,8 +47,8 @@ func NewAPIClient(cfg *config.Config) (*APIClient, errors.Error) {
 	}
 
 	transport := httptransport.New(host.Host, "/", []string{host.Scheme})
-	transport.Producers["application/vnd.puppet.nebula.v1+json"] = runtime.JSONProducer()
-	transport.Consumers["application/vnd.puppet.nebula.v1+json"] = runtime.JSONConsumer()
+	transport.Producers["application/vnd.puppet.nebula.v20191223+json"] = runtime.JSONProducer()
+	transport.Consumers["application/vnd.puppet.nebula.v20191223+json"] = runtime.JSONConsumer()
 
 	delegate := api.New(transport, strfmt.Default)
 
@@ -279,6 +279,20 @@ func (c *APIClient) UpdateWorkflowSecret(ctx context.Context, name, key, value s
 	}
 
 	return resp.Payload.Secret, nil
+}
+
+func (c *APIClient) ListWorkflowSecrets(ctx context.Context, name string) ([]*models.WorkflowSecretSummary, errors.Error) {
+	auth := c.getAuthorizationFunc(ctx)
+
+	params := secrets.NewListWorkflowSecretsParams()
+	params.WorkflowName = name
+
+	resp, werr := c.delegate.WorkflowSecrets.ListWorkflowSecrets(params, auth)
+	if werr != nil {
+		return nil, errors.NewClientListWorkflowRunsError().WithCause(translateRuntimeError(werr))
+	}
+
+	return resp.Payload.Secrets, nil
 }
 
 func (c *APIClient) storeToken(ctx context.Context, token *Token) errors.Error {

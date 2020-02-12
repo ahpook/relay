@@ -20,6 +20,9 @@ import (
 type WorkflowRunSummary struct {
 	WorkflowRunIdentifier
 
+	// created by
+	CreatedBy WorkflowRunCreatedBySummary `json:"created_by,omitempty"`
+
 	// Time at which the workflow execution ended
 	// Format: date-time
 	EndedAt *strfmt.DateTime `json:"ended_at,omitempty"`
@@ -28,9 +31,9 @@ type WorkflowRunSummary struct {
 	// Format: date-time
 	StartedAt *strfmt.DateTime `json:"started_at,omitempty"`
 
-	// Current status of the workflow
+	// Current status of the workflow, based on steps statuses and approvals
 	// Required: true
-	// Enum: [success failure in-progress pending]
+	// Enum: [success failure in-progress pending waiting rejected]
 	Status *string `json:"status"`
 }
 
@@ -45,6 +48,8 @@ func (m *WorkflowRunSummary) UnmarshalJSON(raw []byte) error {
 
 	// AO1
 	var dataAO1 struct {
+		CreatedBy WorkflowRunCreatedBySummary `json:"created_by,omitempty"`
+
 		EndedAt *strfmt.DateTime `json:"ended_at,omitempty"`
 
 		StartedAt *strfmt.DateTime `json:"started_at,omitempty"`
@@ -54,6 +59,8 @@ func (m *WorkflowRunSummary) UnmarshalJSON(raw []byte) error {
 	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
 		return err
 	}
+
+	m.CreatedBy = dataAO1.CreatedBy
 
 	m.EndedAt = dataAO1.EndedAt
 
@@ -75,12 +82,16 @@ func (m WorkflowRunSummary) MarshalJSON() ([]byte, error) {
 	_parts = append(_parts, aO0)
 
 	var dataAO1 struct {
+		CreatedBy WorkflowRunCreatedBySummary `json:"created_by,omitempty"`
+
 		EndedAt *strfmt.DateTime `json:"ended_at,omitempty"`
 
 		StartedAt *strfmt.DateTime `json:"started_at,omitempty"`
 
 		Status *string `json:"status"`
 	}
+
+	dataAO1.CreatedBy = m.CreatedBy
 
 	dataAO1.EndedAt = m.EndedAt
 
@@ -154,7 +165,7 @@ var workflowRunSummaryTypeStatusPropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["success","failure","in-progress","pending"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["success","failure","in-progress","pending","waiting","rejected"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {

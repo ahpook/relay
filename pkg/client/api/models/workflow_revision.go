@@ -6,16 +6,23 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"strconv"
+
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // WorkflowRevision Workflow revision
 // swagger:model WorkflowRevision
 type WorkflowRevision struct {
 	WorkflowData
+
+	// Secrets used by this revision
+	// Required: true
+	Secrets []*WorkflowSecretSummary `json:"secrets"`
 }
 
 // UnmarshalJSON unmarshals this object from a JSON structure
@@ -27,18 +34,40 @@ func (m *WorkflowRevision) UnmarshalJSON(raw []byte) error {
 	}
 	m.WorkflowData = aO0
 
+	// AO1
+	var dataAO1 struct {
+		Secrets []*WorkflowSecretSummary `json:"secrets"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
+		return err
+	}
+
+	m.Secrets = dataAO1.Secrets
+
 	return nil
 }
 
 // MarshalJSON marshals this object to a JSON structure
 func (m WorkflowRevision) MarshalJSON() ([]byte, error) {
-	_parts := make([][]byte, 0, 1)
+	_parts := make([][]byte, 0, 2)
 
 	aO0, err := swag.WriteJSON(m.WorkflowData)
 	if err != nil {
 		return nil, err
 	}
 	_parts = append(_parts, aO0)
+
+	var dataAO1 struct {
+		Secrets []*WorkflowSecretSummary `json:"secrets"`
+	}
+
+	dataAO1.Secrets = m.Secrets
+
+	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
+	if errAO1 != nil {
+		return nil, errAO1
+	}
+	_parts = append(_parts, jsonDataAO1)
 
 	return swag.ConcatJSON(_parts...), nil
 }
@@ -52,9 +81,38 @@ func (m *WorkflowRevision) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateSecrets(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *WorkflowRevision) validateSecrets(formats strfmt.Registry) error {
+
+	if err := validate.Required("secrets", "body", m.Secrets); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(m.Secrets); i++ {
+		if swag.IsZero(m.Secrets[i]) { // not required
+			continue
+		}
+
+		if m.Secrets[i] != nil {
+			if err := m.Secrets[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("secrets" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 

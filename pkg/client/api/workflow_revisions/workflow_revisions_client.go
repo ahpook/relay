@@ -37,7 +37,7 @@ func (a *Client) GetLatestWorkflowRevision(params *GetLatestWorkflowRevisionPara
 		ID:                 "getLatestWorkflowRevision",
 		Method:             "GET",
 		PathPattern:        "/api/workflows/{workflowName}/revisions/latest",
-		ProducesMediaTypes: []string{"application/vnd.puppet.nebula.v1+json"},
+		ProducesMediaTypes: []string{"application/vnd.puppet.nebula.v20191223+json"},
 		ConsumesMediaTypes: []string{""},
 		Schemes:            []string{"https"},
 		Params:             params,
