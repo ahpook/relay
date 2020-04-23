@@ -11,7 +11,7 @@ env:
   - secure: P5Z9AteX+QPxirj4XGbTt9zOgENevx6s+aDKcCpQDQm7qx28tnp4YTlbeLCSupwxpwg/IcaUk9mz2MWbquMnt8IQM1KlDN7YZsTfkIG553puDBsW3lMLx85whTliihbdRSklj9tRIoLgthQrtcc+9hv48oCbDVYNU3hiN4bMFa+RthYON9UDnSYMNN9U4fm/XUNQHYctwLCVRChDd33r6q8MN9Kt9TkjHagqWqmx7DaqMJn6aWUqD5OT08AV/ZuigA/A5IK94ho8jaHOAHnPKO2Y/vTU4KLI1pJdpmNtgt4b0VNlRFoQ+c36Eo1crQqu998N/fnbfFzXHPR8M0lNpuhoiwmjwNEvKHZSwQjxpyu8Z0mviMmmYzlGOXc5Q1a+jjoOHvNBY3vRnb8mB8r9NPKQgbG30nVKbXBAHRJn/VShjibRBFIK8c08g/U7sNHggkPW4/esMcPL+gAB1JqzsPKs+U2b1UAuqiIRtw+vWTBjcbR5HbmNdz+hlM6wfyLmirzaVshIU/vHOSbp+YpaIQpoIDZqM+6bm63FMXz7nnLxQtf0WLpBZlN2m/JZ5jqxCxuBMt7EqxyeCmxovrnWpYOua5sKnkDjI/YLa4Kb76k6An28dWH12HNh2URnpPxSYyTWzYr/IAIu4QL63R+EChAMmocg7AyKxnbObAcC2S0=
 jobs:
   include:
-  - stage: build
+  - stage: test
     install: []
     script:
     - set -e
@@ -37,5 +37,3 @@ notifications:
       %{elapsed_time}"
     rooms:
     - secure: zu/MZURvDivl7qapoRAcOtF6yH9zUwr1YqpDObAlF9mAO0z5VllKVVdDZJZ6QwGNzfl5m4MBXLh7PzXex3VXwbXlGYvUbsvUj9cLo2cLqJqtgBQ4DuVVCJXF4Rj/8sNRx4JfquKGE/Yae07MUXdcIJ1FuOoVHpUTNW1eA0SE5LIWRB8WJiBC53jl5itkUOUqh5l43W+8djpDbcds+vyjE9omwuHW2Zxh7TGqXBSCf2LPmjAzL4eZD2yTE8VUNNbKwx6dBGqpS0Y3Ke4R4bvj9PAZUAqG3dxMKUKU0OyJHg/Jkg5ZqVEoghCSZNGpD2aEfB7C5+hWF1A6Ftvs09qd3cGyioSD88Hj7F7hCzgz2Z+rBMmhvXb9cEeX3iDBDMQ+xd7bDL8bmYMSTVFnnqqz+4SewRCo3efbEF9xaBkUfIpal1Ax0XL9PnBHCniKqVkL99v9ERE5maUoD8W/7JwamqG+ija7P2kblNNLB6G+mh75KHmKU5GNB2+QcLtk3WUtxKLP9KqCUc7CZ9pk02nQlkXClG2nbAWo0QyYq1opbjDMmCpLK1FZiPJpL82QleXfw2JuKIVuUfq9bihOwc1AJvJhJDtNTDQMp+j+2kHBwQOy/EXd1HkK4JTt84+JXzurK3UhcH39g03TCvTpDq/dHy69a706OK4CW2kxIyIfO08=
-stages:
-- build
